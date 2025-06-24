@@ -1,17 +1,13 @@
 <?php
 require 'db.php';
+$head_mod = 'auth';
+require 'vendor/autoload.php';
 
-if (isset($_COOKIE['user_id'])) {
-    header('Location: index.php');
-    exit();
-}
+if (isset($_POST['submit'])){
+    $username = isset($_POST['username']) ? $_POST['username'] : false;
+    $password = isset($_POST['password']) ? $_POST['password'] : false;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-
-    $query = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
-    $result = $db->conn->query($query);
+    $result = $db->conn->query("SELECT `id`, `username`, `password` FROM `users` WHERE `username` = '".$db->conn->real_escape_string($username)."' AND `password` = '".$db->conn->real_escape_string($password)."'");
 
     if ($result && $result->num_rows > 0) {
         $user = $result->fetch_assoc();
@@ -44,10 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="welcome-card">
         <h1 class="welcome-title">Login</h1>
-        <form method="POST">
+        <form action="/login.php" method="POST">
             <input type="text" name="username" placeholder="Username" required style="padding: 0.5rem; width: 100%; margin-bottom: 1rem;"><br>
             <input type="password" name="password" placeholder="Password" required style="padding: 0.5rem; width: 100%; margin-bottom: 1rem;"><br>
-            <button type="submit" style="padding: 0.7rem 1.5rem; background-color: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">Login</button>
+            <button type="submit" name="submit" style="padding: 0.7rem 1.5rem; background-color: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">Login</button>
         </form>
         <p style="margin-top: 1rem;">Don't have an account? <a href="reg.php" style="color: #667eea;">Register</a></p>
     </div>
